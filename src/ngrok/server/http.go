@@ -75,20 +75,22 @@ func httpHandler(c conn.Conn, proto string) {
 		c.Write([]byte(BadRequest))
 		return
 	}
-
 	// read out the Host header and auth from the request
 	host := strings.ToLower(vhostConn.Host())
 	auth := vhostConn.Request.Header.Get("Authorization")
+	path := vhostConn.Request.URL.Path
+	if path != "" && strings.HasSuffix(path, "/") {
+		path = path[0 : len(path)-1]
+	}
 
 	// done reading mux data, free up the request memory
 	vhostConn.Free()
-
 	// We need to read from the vhost conn now since it mucked around reading the stream
 	c = conn.Wrap(vhostConn, "pub")
 
 	// multiplex to find the right backend host
-	c.Debug("Found hostname %s in request", host)
-	tunnel := tunnelRegistry.Get(fmt.Sprintf("%s://%s", proto, host))
+	c.Debug("Found hostname %s in request, and path is %s", host, path)
+	tunnel := tunnelRegistry.Find(fmt.Sprintf("%s://%s", proto, host), path)
 	if tunnel == nil {
 		c.Info("No tunnel found for hostname %s", host)
 		c.Write([]byte(fmt.Sprintf(NotFound, len(host)+18, host)))

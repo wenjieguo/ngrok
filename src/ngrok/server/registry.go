@@ -160,6 +160,23 @@ func (r *TunnelRegistry) Get(url string) *Tunnel {
 	return r.tunnels[url]
 }
 
+func (r *TunnelRegistry) Find(url string, path string) *Tunnel {
+	rs := []rune(path)
+	var t *Tunnel = nil
+	for i, c := range rs {
+		if c == rune('/') && i > 0 {
+			urlpath := url + string(rs[0:i])
+			log.Debug("finding urlpath %s", urlpath)
+			t = r.Get(urlpath)
+			if t != nil {
+				return t
+			}
+		}
+	}
+	t = r.Get(url + path)
+	return t
+}
+
 // ControlRegistry maps a client ID to Control structures
 type ControlRegistry struct {
 	controls map[string]*Control

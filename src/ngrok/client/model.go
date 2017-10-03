@@ -280,6 +280,7 @@ func (c *ClientModel) control() {
 			Protocol:   strings.Join(protocols, "+"),
 			Hostname:   config.Hostname,
 			Subdomain:  config.Subdomain,
+			PathPrefix: config.Path,
 			HttpAuth:   config.HttpAuth,
 			RemotePort: config.RemotePort,
 		}

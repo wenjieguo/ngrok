@@ -29,6 +29,7 @@ type Configuration struct {
 type TunnelConfiguration struct {
 	Subdomain  string            `yaml:"subdomain,omitempty"`
 	Hostname   string            `yaml:"hostname,omitempty"`
+	Path       string            `yaml:"path,omitempty"`
 	Protocols  map[string]string `yaml:"proto,omitempty"`
 	HttpAuth   string            `yaml:"auth,omitempty"`
 	RemotePort uint16            `yaml:"remote_port,omitempty"`
